@@ -1,0 +1,33 @@
+# Define a versão do Docker Compose. A versão "3.8" é uma escolha moderna e estável.
+version: "3.8"
+
+# 'services' é a seção onde definimos os contêineres que farão parte da nossa aplicação.
+services:
+  # 'api_alura' é o nome que estamos dando ao nosso serviço/contêiner.
+  api_alura:
+    # 'build: .' instrui o Docker Compose a construir a imagem Docker a partir do
+    # Dockerfile localizado no diretório atual (onde o docker-compose.yml está).
+    build: .
+
+    # 'command' sobrescreve o comando padrão (CMD) do Dockerfile.
+    # É útil para desenvolvimento, pois podemos adicionar flags como --reload.
+    # - uvicorn: O servidor ASGI que vai rodar a aplicação.
+    # - app:app: Indica para o uvicorn encontrar o objeto 'app' no arquivo 'app.py'.
+    # - --host 0.0.0.0: Faz o servidor escutar em todas as interfaces de rede do contêiner,
+    #   permitindo que nos conectemos a ele a partir da nossa máquina (host).
+    # - --port 8000: Define a porta em que a aplicação vai rodar dentro do contêiner.
+    # - --reload: Ativa o recarregamento automático sempre que um arquivo de código for alterado.
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+
+    # 'volumes' mapeia um diretório da sua máquina (host) para um diretório dentro do contêiner.
+    # - '.:/app': Mapeia o diretório atual ('.') para o diretório '/app' no contêiner.
+    #   Isso é essencial para o desenvolvimento, pois qualquer alteração no seu código
+    #   local será refletida instantaneamente dentro do contêiner, funcionando junto com o --reload.
+    volumes:
+      - .:/app
+
+    # 'ports' mapeia uma porta da sua máquina (host) para uma porta no contêiner.
+    # - "8000:8000": Mapeia a porta 8000 da sua máquina para a porta 8000 do contêiner.
+    #   Isso permite que você acesse a API no seu navegador em http://localhost:8000.
+    ports:
+      - "8000:8000"
